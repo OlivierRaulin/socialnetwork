@@ -1,3 +1,6 @@
 exports.index = function (req, res){
-	res.send("Hello");
+    global.checkRequest(req, res, function(){
+        res.send("Hello");
+    });
+	
 }

@@ -1,9 +1,13 @@
 module.exports = {
     db: {
-        host: "localhost"
+        host: "localhost",
+        port: 3306,
+        user: "socialnetwork",
+        password: "12345",
+        db_name: "socialnetwork"
     },
     http: {
-        port: 8000
+        port: 8001
     },
-    debug: false
+    debug: true
 };
