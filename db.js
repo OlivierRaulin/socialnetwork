@@ -4,7 +4,6 @@ var connections = {}
 
 function Db(){
     this.connect();
-    console.log('Connected to general database');
 }
 
 Db.prototype = {
@@ -19,6 +18,10 @@ Db.prototype = {
               password : config.db.password || 'nopassword',
               database : config.db.db_name  || 'socialnetwork'
             });
+            connections["main"].connect(function(err){
+                if(err) throw err;
+                else console.log("Connected to DB main");
+            });
         }
         else{
             connections[dbname] = mysql.createConnection({
@@ -26,6 +29,10 @@ Db.prototype = {
               user     : dbname,
               password : dbpass,
               database : dbname
+            });
+            connections[dbname].connect(function(err){
+                if(err) throw err;
+                else console.log("Connected to DB", dbname);
             });
         }
     },
@@ -37,6 +44,10 @@ Db.prototype = {
     createDB: function(dbname, dbpass){
         // Not possible through mysql module.
         // Maybe a file in a folder and a cron passing and creating the db ?
+    },
+    
+    getConnections:function(){
+        return connections;
     }
 
 

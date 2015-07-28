@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page to simulate requests</title>
+    <script type="text/javascript">
+        var req;
+
+        display = function(msg) {
+            document.getElementById('result').innerHTML = msg;
+        }
+
+        req = new XMLHttpRequest();
+
+        req.onreadystatechange = function() {
+         var cType;
+         if (this.readyState == 4) {
+            if (this.status != 200) {
+                display('Error : Status '+this.status+' returned.');
+            } else {
+                display(this.response);
+            }
+         }
+        }
+        
+        function send(){
+            var method = document.getElementById("method").value;
+            var page = document.getElementById("page").value;
+            var data = document.getElementById("postdata").value;
+            req.open(method, 'http://127.0.0.1:8001/'+page, true);
+            req.send(data);
+        }
+        
+    </script>
+</head>
+<body>
+    HTTP Method:
+    <select id="method">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+    </select><br />
+    Page called: <input id="page" type="text" /><br />
+    <textarea id="postdata"></textarea><br />
+    <input type="button" onClick="send();" value="Submit" /><br />
+    <div id="result"></div>
+    
+</body>
+</html>

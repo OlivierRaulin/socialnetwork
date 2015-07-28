@@ -9,13 +9,14 @@ var setup       = require ('./setup.js');
 setup.check();
 
 var app = express() ;
+app.use(express.static(__dirname + '/www'));
 
 // Main routes
 app.get( '/', mainRoutes.index );
 
 // Apps related routes
 // This one needs to be changed to post one day
-app.get('/apps/create/:referer?', apps.createApp);
+app.post('/apps/create/:referer?', apps.createApp);
 
 // User-related routes
 app.post( '/user/register', user.register );
@@ -39,4 +40,17 @@ global.checkRequest = function(req, res, ok){
         ok();
     }
     else res.status(401).send("Unauthorized");
+}
+
+global.randomString = function(length, cb){
+    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var generated = "";
+    
+    function getRandom(){
+        return Math.random() * chars.length;
+    }
+    for( var i=0; i<length; i++ ){
+        generated += chars.charAt( getRandom() );
+    }
+    cb(generated);
 }
