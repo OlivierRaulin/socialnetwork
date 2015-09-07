@@ -4,7 +4,7 @@ module.exports = {
         port: 3306,
         user: "socialnetwork",
         password: "12345",
-        db_name: "socialnetwork"
+        db_name: "main"
     },
     http: {
         port: 8001

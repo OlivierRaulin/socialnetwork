@@ -1,11 +1,12 @@
 var config 	= require ('./config.js');
 var events 	= require ('./events.js');
-var mainRoutes 	= require ('./routes/main.js');
-var user        = require ('./routes/user.js');
-var apps        = require ('./routes/apps.js');
+var mainRoutes 	= require ('./routes/main');
+var userRoutes  = require ('./routes/user');
+var apps        = require ('./routes/apps');
 var express 	= require ('express');
-var setup       = require ('./setup.js');
+var Setup       = require ('./setup');
 
+var setup = new Setup();
 setup.check();
 
 var app = express() ;
@@ -14,43 +15,16 @@ app.use(express.static(__dirname + '/www'));
 // Main routes
 app.get( '/', mainRoutes.index );
 
+//TODO: handle with app.routes('/test').get(callback).post(callback).put(callback); ...
 // Apps related routes
 // This one needs to be changed to post one day
-app.post('/apps/create/:referer?', apps.createApp);
+app.post('/app', apps.createApp);
 
 // User-related routes
-app.post( '/user/register', user.register );
+app.post( '/user/register', mainRoutes.checkRequest, userRoutes.register );
+app.get( '/user/:id/:appid/:appkey', mainRoutes.checkRequest, userRoutes.getById );
 
 app.listen( config.http.port || 8000, function(err){
 	if( err ){ throw err; exit(1) ; }
 	console.log("Listening on port", config.http.port || 8000);
 });
-
-process.on( 'uncaughtException', function ( err ) {
-    if (config.debug == true) process.exit( 1 );
-    console.error( "UncaughtException:", err );
-} );
-
-global.checkRequest = function(req, res, ok){
-    console.log("-------- HEADERS --------- \n", req.headers, "\n---------- PARAMS ---------- \n", req.params); 
-    console.log('REFERER ', req.headers.referer);
-    if( req.params.appid && req.params.appkey && req.headers.referer ){
-        // Checking if we authorize the call
-        res.status(200);
-        ok();
-    }
-    else res.status(401).send("Unauthorized");
-}
-
-global.randomString = function(length, cb){
-    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    var generated = "";
-    
-    function getRandom(){
-        return Math.random() * chars.length;
-    }
-    for( var i=0; i<length; i++ ){
-        generated += chars.charAt( getRandom() );
-    }
-    cb(generated);
-}

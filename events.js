@@ -1,3 +1,6 @@
+var Setup = require('./setup');
+var setup = new Setup();
+
 /* Handle uncaught exception */
 process.on ( 'uncaughtException', function ( err ) {
     if ( err.code == "EADDRINUSE" ) {
@@ -13,4 +16,13 @@ process.on ( "SIGTERM", function () {
     /*webserver.close ( function () {
         console.warn ( "Server has been shut down" );
     } );*/
-}.bind ( this ) );
+});
+
+// We are asked to reload some stuff.
+// Connect to new databases added dynamically.
+process.on('SIGUSR1', function(){
+	// Do the reloading
+	global.db.query("SELECT * FROM apps", "main", function(err, dbs){
+		setup.fetchApps();
+	});
+});
